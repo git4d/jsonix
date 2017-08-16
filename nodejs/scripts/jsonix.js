@@ -6142,11 +6142,11 @@ Jsonix.Context = Jsonix
 if (typeof require === 'function') {
 	// ... but the define function does not exists
 	if (typeof define !== 'function') {
-		// Load the define function via amdefine
-		var define = require('amdefine')(module);
 		// If we're not in browser
 		if (typeof window === 'undefined')
 		{
+			// Load the define function via amdefine
+			var define = require('amdefine')(module);
 			// Require xmldom, xmlhttprequest and fs
 			define(["xmldom", "xmlhttprequest", "fs"], _jsonix_factory);
 		}
@@ -6155,7 +6155,13 @@ if (typeof require === 'function') {
 			// We're probably in browser, maybe browserify
 			// Do not require xmldom, xmlhttprequest as they'r provided by the browser
 			// Do not require fs since file system is not available anyway
-			define([], _jsonix_factory);
+			
+			// Thanks to https://github.com/boundlessgeo/jsonix/commit/57f9caaa1ec08408d3d47dfdec899880dbcce98d
+			if (typeof exports === 'object) {
+				module.exports = _jsonix_factory(); 
+		    	} else {
+				var Jsonix = _jsonix_factory().Jsonix;
+			}
 		}
 	}
 	else {
